@@ -28,6 +28,18 @@ interface Handler
     public function create($sourceUrl, $destinationUrl, $forward = false);
 
     /**
+     * Update an url wildcard.
+     *
+     * @return \eZ\Publish\SPI\Persistence\Content\UrlWildcard
+     */
+    public function update(
+        int $id,
+        string $destinationUrl,
+        string $sourceUrl,
+        int $type
+    ): UrlWildcard;
+
+    /**
      * removes an url wildcard.
      *
      * @throws \eZ\Publish\API\Repository\Exceptions\NotFoundException if the url wild card was not found

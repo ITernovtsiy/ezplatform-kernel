@@ -65,6 +65,49 @@ final class DoctrineDatabase extends Gateway
         return (int)$this->connection->lastInsertId(self::URL_WILDCARD_SEQ);
     }
 
+    public function updateUrlWildcard(
+        int $id,
+        string $destinationUrl,
+        string $sourceUrl,
+        int $type
+    ): void {
+        $query = $this->connection->createQueryBuilder();
+
+        $query
+            ->update(self::URL_WILDCARD_TABLE)
+            ->set(
+                'destination_url',
+                $query->createPositionalParameter(
+                    trim($destinationUrl, '/ '), // todo
+                    ParameterType::STRING
+                ),
+            )->set(
+                'source_url',
+                $query->createPositionalParameter(
+                    trim($sourceUrl, '/ '), // todo
+                    ParameterType::STRING
+                ),
+            )->set(
+                'type',
+                $query->createPositionalParameter(
+                    $type ? 1 : 2,
+                    ParameterType::INTEGER
+                )
+            );
+
+        $query->where(
+            $query->expr()->eq(
+                'id',
+                $query->createPositionalParameter(
+                    $id,
+                    ParameterType::INTEGER
+                )
+            )
+        );
+
+        $query->execute();
+    }
+
     public function deleteUrlWildcard(int $id): void
     {
         $query = $this->connection->createQueryBuilder();

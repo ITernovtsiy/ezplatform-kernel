@@ -10,6 +10,7 @@ namespace eZ\Publish\API\Repository;
 
 use eZ\Publish\API\Repository\Values\Content\URLWildcard;
 use eZ\Publish\API\Repository\Values\Content\URLWildcardTranslationResult;
+use eZ\Publish\API\Repository\Values\Content\URLWildcardUpdateStruct;
 
 /**
  * URLAlias service.
@@ -34,6 +35,22 @@ interface URLWildcardService
      * @return \eZ\Publish\API\Repository\Values\Content\UrlWildcard
      */
     public function create(string $sourceUrl, string $destinationUrl, bool $forward = false): UrlWildcard;
+
+    /**
+     *  todo: anot
+     * Update an url wildcard.
+     *
+     * @throws \eZ\Publish\API\Repository\Exceptions\InvalidArgumentException if the $sourceUrl pattern already exists
+     * @throws \eZ\Publish\API\Repository\Exceptions\UnauthorizedException if the user is not allowed to create url wildcards
+     * @throws \eZ\Publish\API\Repository\Exceptions\ContentValidationException if the number of "*" patterns in $sourceUrl and
+     *          the number of {\d} placeholders in $destinationUrl doesn't match or
+     *          if the placeholders aren't a valid number sequence({1}/{2}/{3}), starting with 1.
+     *
+     * @param string $sourceUrl
+     * @param string $destinationUrl
+     * @param bool $forward
+     */
+    public function update(URLWildcard $URLWildcard, URLWildcardUpdateStruct $updateStruct): void;
 
     /**
      * Removes an url wildcard.

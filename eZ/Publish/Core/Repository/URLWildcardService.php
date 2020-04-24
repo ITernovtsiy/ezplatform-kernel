@@ -11,6 +11,7 @@ namespace eZ\Publish\Core\Repository;
 use eZ\Publish\API\Repository\PermissionResolver;
 use eZ\Publish\API\Repository\URLWildcardService as URLWildcardServiceInterface;
 use eZ\Publish\API\Repository\Repository as RepositoryInterface;
+use eZ\Publish\API\Repository\Values\Content\URLWildcardUpdateStruct;
 use eZ\Publish\SPI\Persistence\Content\UrlWildcard\Handler;
 use eZ\Publish\API\Repository\Values\Content\URLWildcard;
 use eZ\Publish\API\Repository\Values\Content\URLWildcardTranslationResult;
@@ -89,15 +90,7 @@ class URLWildcardService implements URLWildcardServiceInterface
             );
         }
 
-        preg_match_all('(\\*)', $sourceUrl, $patterns);
-        preg_match_all('(\{(\d+)\})', $destinationUrl, $placeholders);
-
-        $patterns = array_map('intval', $patterns[0]);
-        $placeholders = array_map('intval', $placeholders[1]);
-
-        if (!empty($placeholders) && max($placeholders) > count($patterns)) {
-            throw new ContentValidationException('Placeholders do not match the wildcards.');
-        }
+        $this->validateUrls($sourceUrl, $destinationUrl);
 
         $this->repository->beginTransaction();
         try {
@@ -113,6 +106,30 @@ class URLWildcardService implements URLWildcardServiceInterface
         }
 
         return $this->buildUrlWildcardDomainObject($spiUrlWildcard);
+    }
+
+    public function update(URLWildcard $URLWildcard, URLWildcardUpdateStruct $updateStruct): void
+    {
+        $destinationUrl = $updateStruct->destinationUrl;
+        $sourceUrl = $updateStruct->sourceUrl;
+
+        $this->validateUrls($sourceUrl, $destinationUrl);
+
+        $this->repository->beginTransaction();
+
+        try {
+            $this->urlWildcardHandler->update(
+                $URLWildcard->id,
+                $destinationUrl,
+                $sourceUrl,
+                (int) $updateStruct->forward
+            );
+
+            $this->repository->commit();
+        } catch (Exception $e) {
+            $this->repository->rollback();
+            throw $e;
+        }
     }
 
     /**
@@ -242,5 +259,24 @@ class URLWildcardService implements URLWildcardServiceInterface
     private function cleanPath(string $path): string
     {
         return trim($path, '/ ');
+    }
+
+    /**
+     * @param string $sourceUrl
+     * @param string $destinationUrl
+     *
+     * @throws ContentValidationException
+     */
+    private function validateUrls(string $sourceUrl, string $destinationUrl): void
+    {
+        preg_match_all('(\\*)', $sourceUrl, $patterns);
+        preg_match_all('(\{(\d+)\})', $destinationUrl, $placeholders);
+
+        $patterns = array_map('intval', $patterns[0]);
+        $placeholders = array_map('intval', $placeholders[1]);
+
+        if (!empty($placeholders) && max($placeholders) > count($patterns)) {
+            throw new ContentValidationException('Placeholders do not match the wildcards.');
+        }
     }
 }

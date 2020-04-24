@@ -45,6 +45,24 @@ final class ExceptionConversion extends Gateway
         }
     }
 
+    public function updateUrlWildcard(
+        int $id,
+        string $destinationUrl,
+        string $sourceUrl,
+        int $type
+    ): void {
+        try {
+            $this->innerGateway->updateUrlWildcard(
+                $id,
+                $destinationUrl,
+                $sourceUrl,
+                $type
+            );
+        } catch (DBALException | PDOException $e) {
+            throw DatabaseException::wrap($e);
+        }
+    }
+
     public function deleteUrlWildcard(int $id): void
     {
         try {

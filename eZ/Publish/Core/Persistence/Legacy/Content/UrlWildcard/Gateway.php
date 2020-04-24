@@ -26,6 +26,16 @@ abstract class Gateway
     abstract public function insertUrlWildcard(UrlWildcard $urlWildcard): int;
 
     /**
+     * Update the given UrlWildcard.
+     */
+    abstract public function updateUrlWildcard(
+        int $id,
+        string $destinationUrl,
+        string $sourceUrl,
+        int $type
+    ): void;
+
+    /**
      * Delete the UrlWildcard with given $id.
      */
     abstract public function deleteUrlWildcard(int $id): void;
