@@ -6,7 +6,7 @@ services:
 
     eZ\Publish\Core\FieldType\Image\ImageThumbnailStrategy:
         arguments:
-            $variationHandler: '@eZ\Publish\SPI\Variation\VariationHandler'
+            $variationHandler: '@ezpublish.image_alias.imagine.cache.alias_generator_decorator'
             $variationName: 'medium'
 
     eZ\Publish\Core\FieldType\ImageAsset\ImageAssetThumbnailStrategy:

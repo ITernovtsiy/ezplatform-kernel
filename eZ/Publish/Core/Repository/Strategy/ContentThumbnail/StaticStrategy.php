@@ -8,8 +8,8 @@ declare(strict_types=1);
 
 namespace eZ\Publish\Core\Repository\Strategy\ContentThumbnail;
 
+use eZ\Publish\API\Repository\Values\Content\Content;
 use eZ\Publish\API\Repository\Values\Content\Thumbnail;
-use eZ\Publish\API\Repository\Values\ContentType\ContentType;
 use eZ\Publish\SPI\Repository\Strategy\ContentThumbnail\ThumbnailStrategy;
 
 final class StaticStrategy implements ThumbnailStrategy
@@ -22,7 +22,7 @@ final class StaticStrategy implements ThumbnailStrategy
         $this->staticThumbnail = $staticThumbnail;
     }
 
-    public function getThumbnail(ContentType $contentType, array $fields): Thumbnail
+    public function getThumbnail(Content $content): Thumbnail
     {
         return new Thumbnail([
             'resource' => $this->staticThumbnail,

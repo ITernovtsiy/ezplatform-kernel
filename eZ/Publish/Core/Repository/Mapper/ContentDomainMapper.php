@@ -117,15 +117,19 @@ class ContentDomainMapper extends ProxyAwareDomainMapper
 
         $internalFields = $this->buildDomainFields($spiContent->fields, $contentType, $prioritizedLanguages, $fieldAlwaysAvailableLanguage);
 
-        return new Content(
+        $content = new Content(
             [
-                'thumbnail' => $this->thumbnailStrategy->getThumbnail($contentType, $internalFields),
                 'internalFields' => $internalFields,
                 'versionInfo' => $this->buildVersionInfoDomainObject($spiContent->versionInfo, $prioritizedLanguages),
                 'contentType' => $contentType,
                 'prioritizedFieldLanguageCode' => $prioritizedFieldLanguageCode,
             ]
         );
+        $content->setThumbnail(
+            $this->thumbnailStrategy->getThumbnail($content)
+        );
+
+        return $content;
     }
 
     /**

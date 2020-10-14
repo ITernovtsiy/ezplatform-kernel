@@ -8,10 +8,10 @@ declare(strict_types=1);
 
 namespace eZ\Publish\SPI\Repository\Strategy\ContentThumbnail\Field;
 
-use eZ\Publish\API\Repository\Values\Content\Field;
+use eZ\Publish\API\Repository\Values\Content\Content;
 use eZ\Publish\API\Repository\Values\Content\Thumbnail;
 
 interface ThumbnailStrategy
 {
-    public function getThumbnail(Field $field): ?Thumbnail;
+    public function getThumbnail(Content $content, string $fieldIdentifier): ?Thumbnail;
 }

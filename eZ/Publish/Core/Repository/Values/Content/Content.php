@@ -70,6 +70,11 @@ class Content extends APIContent
         return $this->thumbnail;
     }
 
+    public function setThumbnail(?Thumbnail $thumbnail): void
+    {
+        $this->thumbnail = $thumbnail;
+    }
+
     /**
      * {@inheritdoc}
      */

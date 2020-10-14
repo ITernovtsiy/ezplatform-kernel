@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace eZ\Publish\Core\Repository\Strategy\ContentThumbnail\Field;
 
+use eZ\Publish\API\Repository\Values\Content\Content;
 use eZ\Publish\API\Repository\Values\Content\Field;
 use eZ\Publish\API\Repository\Values\Content\Thumbnail;
 use eZ\Publish\Core\Base\Exceptions\NotFoundException;
@@ -35,17 +36,17 @@ final class ContentFieldStrategy implements ThumbnailStrategy
     /**
      * @throws \eZ\Publish\Core\Base\Exceptions\NotFoundException
      */
-    public function getThumbnail(Field $field): ?Thumbnail
+    public function getThumbnail(Content $content, string $fieldTypeIdentifier): ?Thumbnail
     {
-        if (!$this->hasStrategy($field->fieldTypeIdentifier)) {
-            throw new NotFoundException('Field\ThumbnailStrategy', $field->fieldTypeIdentifier);
+        if (!$this->hasStrategy($fieldTypeIdentifier)) {
+            throw new NotFoundException('Field\ThumbnailStrategy', $fieldTypeIdentifier);
         }
 
-        $fieldStrategies = $this->strategies[$field->fieldTypeIdentifier];
+        $fieldStrategies = $this->strategies[$fieldTypeIdentifier];
 
         /** @var FieldTypeBasedThumbnailStrategy $fieldStrategy */
         foreach ($fieldStrategies as $fieldStrategy) {
-            $thumbnail = $fieldStrategy->getThumbnail($field);
+            $thumbnail = $fieldStrategy->getThumbnail($content, $fieldTypeIdentifier);
 
             if ($thumbnail !== null) {
                 return $thumbnail;
